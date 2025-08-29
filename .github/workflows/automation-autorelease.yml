@@ -3,7 +3,7 @@ on:
   workflow_dispatch: {}
   schedule:
     # check at 11am every day
-    - cron: "0 11 * * *"
+    # - cron: "0 11 * * *"
 jobs:
   autorelease:
     name: autorelease
