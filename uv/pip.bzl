@@ -17,6 +17,7 @@ def pip_compile(
         data = None,
         tags = None,
         size = None,
+        timeout = None,
         env = None,
         **kwargs):
     """
@@ -41,6 +42,7 @@ def pip_compile(
         data: (optional) a list of labels of additional files to include
         tags: (optional) tags to apply to the generated test target
         size: (optional) size of the test target, see https://bazel.build/reference/test-encyclopedia#role-test-runner
+        timeout: (optional) timeout of the test target, see https://bazel.build/reference/test-encyclopedia#role-test-runner
         env: (optional) a dictionary of environment variables to set for uv pip compile and the test target
         **kwargs: (optional) other fields passed through to all underlying rules
 
@@ -98,6 +100,7 @@ def pip_compile(
         extra_args = extra_args,
         tags = ["requires-network"] + tags,
         size = size,
+        timeout = timeout,
         env = env,
         **kwargs
     )
