@@ -60,7 +60,7 @@ def create_venv(name, requirements_txt = None, target_compatible_with = None, de
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
-        template = "//uv/private:create_venv.sh",
+        template = Label("//uv/private:create_venv.sh"),
     )
 
 def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
@@ -71,5 +71,5 @@ def sync_venv(name, requirements_txt = None, target_compatible_with = None, dest
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
-        template = "//uv/private:sync_venv.sh",
+        template = Label("//uv/private:sync_venv.sh"),
     )
