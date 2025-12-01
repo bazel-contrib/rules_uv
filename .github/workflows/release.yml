@@ -8,7 +8,9 @@ jobs:
   release:
     uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7
     permissions:
+      id-token: write
       contents: write
+      attestations: write
     with:
       release_files: rules_uv-*.tar.gz
       prerelease: false
