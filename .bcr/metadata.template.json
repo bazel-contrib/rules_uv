@@ -2,17 +2,13 @@
   "homepage": "https://github.com/theoremlp/rules_uv",
   "maintainers": [
     {
-      "email": "123787712+mark-thm@users.noreply.github.com",
-      "github": "mark-thm",
-      "name": "Mark Elliot"
-    },
-    {
-      "email": "bazel-maintainers@theoremlp.com",
-      "github": "theoremlp",
-      "name": "Theorem Bazel Maintainers"
+        "email": "685891+markelliot@users.noreply.github.com",
+        "github": "markelliot",
+        "name": "Mark Elliot",
+        "github_user_id": 685891
     }
   ],
-  "repository": ["github:theoremlp/rules_uv"],
+  "repository": ["github:bazel-contrib/rules_uv"],
   "versions": [],
   "yanked_versions": {}
 }
