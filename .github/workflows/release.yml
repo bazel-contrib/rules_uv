@@ -14,3 +14,13 @@ jobs:
     with:
       release_files: rules_uv-*.tar.gz
       prerelease: false
+
+  # publish to BCR
+  publish:
+    needs: release
+    uses: ./.github/workflows/publish-to-bcr.yml
+    with:
+      tag_name: ${{ github.ref_name }}
+    secrets: inherit
+
+    
