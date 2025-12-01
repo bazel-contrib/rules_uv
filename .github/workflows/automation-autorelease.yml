@@ -1,6 +1,7 @@
 name: autorelease
 on:
-  workflow_dispatch: {}
+  schedule:
+    - cron: '0 17 * * 5' # Every Friday at 12pm EST (5pm UTC)
 jobs:
   autorelease:
     name: autorelease
