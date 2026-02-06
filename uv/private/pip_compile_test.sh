@@ -6,6 +6,7 @@ set -euo pipefail
 REQUIREMENTS_IN="{{requirements_in}}"
 REQUIREMENTS_TXT="{{requirements_txt}}"
 COMPILE_COMMAND="{{compile_command}}"
+CONSTRAINTS_TXT="{{constraints_txt}}"
 
 # make a writable copy of incoming requirements
 updated_file=$(mktemp)
@@ -16,6 +17,7 @@ cp "$REQUIREMENTS_TXT" "$updated_file"
     --quiet \
     --no-cache \
     {{args}} \
+    ${CONSTRAINTS_TXT:+--constraint="$CONSTRAINTS_TXT"} \
     --output-file="$updated_file" \
     "$REQUIREMENTS_IN"
 
