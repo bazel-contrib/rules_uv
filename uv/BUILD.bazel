@@ -1,6 +1,15 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
 bzl_library(
+    name = "uv_export",
+    srcs = ["export.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//uv/private:uv_export",
+    ],
+)
+
+bzl_library(
     name = "pip",
     srcs = ["pip.bzl"],
     visibility = ["//visibility:public"],

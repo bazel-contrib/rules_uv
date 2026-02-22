@@ -1,0 +1,7 @@
+load("@rules_uv//uv:export.bzl", "uv_export")
+
+uv_export(
+    name = "export",
+    pyproject_toml = "pyproject.toml",
+    requirements_txt = "requirements.txt",
+)
