@@ -1,4 +1,4 @@
-load("@rules_uv//uv:export.bzl", "uv_export")
+load("@rules_uv//uv:uv_export.bzl", "uv_export")
 
 uv_export(
     name = "export",

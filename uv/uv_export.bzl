@@ -1,6 +1,6 @@
 "uv based uv lock rules"
 
-load("//uv/private:export.bzl", "uv_export_test", _uv_export = "uv_export")
+load("//uv/private:uv_export.bzl", "uv_export_test", _uv_export = "uv_export")
 
 def uv_export(
         name,
