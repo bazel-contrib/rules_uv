@@ -7,7 +7,7 @@ PYPROJECT_TOML="{{pyproject_toml}}"
 REQUIREMENTS_TXT="{{requirements_txt}}"
 COMPILE_COMMAND="{{compile_command}}"
 
-updated_file=$(mktemp)
+updated_file=$(mktemp -p "$(dirname "$REQUIREMENTS_TXT")" ".$(basename "$REQUIREMENTS_TXT").tmp.XXXXXX")
 trap 'rm -f "$updated_file"' EXIT
 
 {{uv}} export \
