@@ -16,4 +16,4 @@ trap 'rm -f "$updated_file"' EXIT
     --output-file="$updated_file" \
     "$@"
 
-mv -f "$updated_file" "$REQUIREMENTS_TXT"
+cp -f "$updated_file" "$REQUIREMENTS_TXT"
