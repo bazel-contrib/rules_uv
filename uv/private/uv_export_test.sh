@@ -16,7 +16,7 @@ cp "$REQUIREMENTS_TXT" "$updated_file"
     --quiet \
     --no-cache \
     {{args}} \
-    --directory="$(dirname "$PYPROJECT_TOML")" \
+    --project="$(dirname "$PYPROJECT_TOML")" \
     --output-file="$updated_file" \
     "$@"
 

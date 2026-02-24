@@ -9,6 +9,6 @@ COMPILE_COMMAND="{{compile_command}}"
 
 {{uv}} export \
     {{args}} \
-    --directory="$(dirname "$PYPROJECT_TOML")" \
+    --project="$(dirname "$PYPROJECT_TOML")" \
     --output-file="$REQUIREMENTS_TXT" \
     "$@"
