@@ -10,7 +10,8 @@ _PY_TOOLCHAIN = "@bazel_tools//tools/python:toolchain_type"
 _DEFAULT_ARGS = [
     "--format",
     "requirements.txt",
-    "--no-header",
+    "--no-header",  # Exclude the header comment with uv command that generated the file
+    "--no-emit-workspace",  # Don't emit any workspace structure in the output
 ]
 
 _COMMON_ATTRS = {
