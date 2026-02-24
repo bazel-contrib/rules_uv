@@ -17,6 +17,6 @@ trap 'rm -f "$updated_file"' EXIT
     {{args}} \
     --project="$(dirname "$PYPROJECT_TOML")" \
     "$@" \
-    > "$updated_file"
+    > "$REQUIREMENTS_TXT"
 
-cp -f "$updated_file" "$REQUIREMENTS_TXT"
+# cp -f "$updated_file" "$REQUIREMENTS_TXT"
