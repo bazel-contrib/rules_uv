@@ -19,8 +19,8 @@ _COMMON_ATTRS = {
     "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
     "py3_runtime": attr.label(),
     "data": attr.label_list(allow_files = True),
-    "uv_args": attr.string_list(),
-    "extra_args": attr.string_list(default = _DEFAULT_ARGS),
+    "uv_args": attr.string_list(default = _DEFAULT_ARGS),
+    "extra_args": attr.string_list(),
     "env": attr.string_dict(),
     "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
 }
