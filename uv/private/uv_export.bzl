@@ -22,6 +22,7 @@ _COMMON_ATTRS = {
     "data": attr.label_list(allow_files = True),
     "uv_args": attr.string_list(default = _DEFAULT_ARGS),
     "extra_args": attr.string_list(),
+    "uv_lock_args": attr.string_list(),
     "env": attr.string_dict(),
     "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
 }
@@ -38,7 +39,8 @@ def _uv_uv_export(
         executable,
         generator_label,
         uv_args,
-        extra_args):
+        extra_args,
+        uv_lock_args):
     py3_runtime = _python_runtime(ctx)
     compile_command = "bazel run {label}".format(label = str(generator_label))
 
@@ -62,7 +64,7 @@ def _uv_uv_export(
             "{{requirements_txt}}": ctx.file.requirements_txt.short_path,
             "{{uv_lock}}": uv_lock_path,
             "{{compile_command}}": compile_command,
-            "{{extra_args}}": " ".join(extra_args),
+            "{{uv_lock_args}}": " ".join(uv_lock_args),
         },
     )
 
@@ -87,6 +89,7 @@ def _uv_export_impl(ctx):
         generator_label = ctx.label,
         uv_args = ctx.attr.uv_args,
         extra_args = ctx.attr.extra_args,
+        uv_lock_args = ctx.attr.uv_lock_args,
     )
     return [
         DefaultInfo(
@@ -116,6 +119,7 @@ def _uv_export_test_impl(ctx):
         generator_label = ctx.attr.generator_label.label,
         uv_args = ctx.attr.uv_args,
         extra_args = ctx.attr.extra_args,
+        uv_lock_args = ctx.attr.uv_lock_args,
     )
     return [
         DefaultInfo(

@@ -10,6 +10,7 @@ def uv_export(
         target_compatible_with = None,
         args = None,
         extra_args = None,
+        uv_lock_args = None,
         data = None,
         tags = None,
         size = None,
@@ -28,8 +29,11 @@ def uv_export(
           Bazel platforms.
         args: (optional) override the default arguments passed to uv export, default arguments are:
            --format requirements.txt (Output in requirements.txt format)
+           --no-header (Exclude the header comment with uv command that generated the file)
+           --no-emit-workspace  (Don't emit any workspace structure in the output)
         extra_args: (optional) appends to the default arguments passed to uv export. If both args and
             extra_args are provided, extra_args will be appended to args.
+        uv_lock_args: (optional) arguments passed to uv lock.
         data: (optional) a list of labels of additional files to include.
         tags: (optional) tags to apply to the generated test target.
         size: (optional) size of the test target.
@@ -55,6 +59,7 @@ def uv_export(
         target_compatible_with = target_compatible_with,
         uv_args = args,
         extra_args = extra_args,
+        uv_lock_args = uv_lock_args,
         data = data,
         env = env,
         **kwargs
@@ -75,6 +80,7 @@ def uv_export(
         target_compatible_with = target_compatible_with,
         uv_args = args,
         extra_args = extra_args,
+        uv_lock_args = uv_lock_args,
         data = data,
         tags = ["requires-network"] + tags,
         size = size,
