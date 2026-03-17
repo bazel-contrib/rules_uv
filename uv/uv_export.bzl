@@ -6,6 +6,7 @@ def uv_export(
         name,
         pyproject_toml = None,
         requirements_txt = None,
+        uv_lock = None,
         target_compatible_with = None,
         args = None,
         extra_args = None,
@@ -22,6 +23,7 @@ def uv_export(
         name: name of the primary compilation target.
         pyproject_toml: (optional, default "//:pyproject.toml") a label for the pyproject.toml file.
         requirements_txt: (optional, default "//:requirements.txt") a label for the requirements.txt file.
+        uv_lock: (optional) a label for the uv.lock file. If provided, it will be used to pin versions.
         target_compatible_with: (optional) specify that a particular target is compatible only with certain
           Bazel platforms.
         args: (optional) override the default arguments passed to uv export, default arguments are:
@@ -49,6 +51,7 @@ def uv_export(
         name = name,
         pyproject_toml = pyproject_toml,
         requirements_txt = requirements_txt,
+        uv_lock = uv_lock,
         target_compatible_with = target_compatible_with,
         uv_args = args,
         extra_args = extra_args,
@@ -68,6 +71,7 @@ def uv_export(
         generator_label = name,
         pyproject_toml = pyproject_toml,
         requirements_txt = requirements_txt,
+        uv_lock = uv_lock,
         target_compatible_with = target_compatible_with,
         uv_args = args,
         extra_args = extra_args,

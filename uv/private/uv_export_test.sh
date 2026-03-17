@@ -6,17 +6,34 @@ set -euo pipefail
 PYPROJECT_TOML="{{pyproject_toml}}"
 REQUIREMENTS_TXT="{{requirements_txt}}"
 COMPILE_COMMAND="{{compile_command}}"
+UV_LOCK="{{uv_lock}}"
 
 # make a writable copy of incoming requirements
 updated_file=$(mktemp)
 trap 'rm -f "$updated_file"' EXIT
 cp "$REQUIREMENTS_TXT" "$updated_file"
 
+# Check if uv.lock exists in the project directory
+PROJECT_DIR="$(dirname "$PYPROJECT_TOML")"
+LOCK_FILE="$PROJECT_DIR/uv.lock"
+
+# If UV_LOCK is provided, ensure it is the same as LOCK_FILE
+if [ -n "$UV_LOCK" ] && ! [ "$UV_LOCK" -ef "$LOCK_FILE" ]; then
+    echo "Error: uv_lock ($UV_LOCK) is not the same file as expected ($LOCK_FILE). Please ensure uv_lock is in the same directory as pyproject.toml."
+    exit 1
+fi
+
+LOCK_ARGS=""
+if [ -f "$LOCK_FILE" ]; then
+    LOCK_ARGS="--locked"
+fi
+
 {{uv}} export \
     --quiet \
     --no-cache \
+    $LOCK_ARGS \
     {{args}} \
-    --project="$(dirname "$PYPROJECT_TOML")" \
+    --project="$PROJECT_DIR" \
     --output-file="$updated_file" \
     "$@"
 

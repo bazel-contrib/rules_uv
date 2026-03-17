@@ -17,6 +17,7 @@ _DEFAULT_ARGS = [
 _COMMON_ATTRS = {
     "pyproject_toml": attr.label(mandatory = True, allow_single_file = True),
     "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
+    "uv_lock": attr.label(allow_single_file = True),
     "py3_runtime": attr.label(),
     "data": attr.label_list(allow_files = True),
     "uv_args": attr.string_list(default = _DEFAULT_ARGS),
@@ -41,10 +42,14 @@ def _uv_uv_export(
     py3_runtime = _python_runtime(ctx)
     compile_command = "bazel run {label}".format(label = str(generator_label))
 
+    python_arg = "--python={python}".format(python = python_interpreter_path(py3_runtime))
+
     args = []
     args += uv_args
     args += extra_args
-    args.append("--python={python}".format(python = python_interpreter_path(py3_runtime)))
+    args.append(python_arg)
+
+    uv_lock_path = ctx.file.uv_lock.short_path if ctx.file.uv_lock else ""
 
     ctx.actions.expand_template(
         template = template,
@@ -52,16 +57,22 @@ def _uv_uv_export(
         substitutions = {
             "{{uv}}": ctx.executable._uv.short_path,
             "{{args}}": " \\\n    ".join(args),
+            "{{python_arg}}": python_arg,
             "{{pyproject_toml}}": ctx.file.pyproject_toml.short_path,
             "{{requirements_txt}}": ctx.file.requirements_txt.short_path,
+            "{{uv_lock}}": uv_lock_path,
             "{{compile_command}}": compile_command,
+            "{{extra_args}}": " ".join(extra_args),
         },
     )
 
 def _runfiles(ctx):
     py3_runtime = _python_runtime(ctx)
+    files = [ctx.file.pyproject_toml, ctx.file.requirements_txt] + ctx.files.data
+    if ctx.file.uv_lock:
+        files.append(ctx.file.uv_lock)
     runfiles = ctx.runfiles(
-        files = [ctx.file.pyproject_toml, ctx.file.requirements_txt] + ctx.files.data,
+        files = files,
         transitive_files = py3_runtime.files,
     )
     runfiles = runfiles.merge(ctx.attr._uv[0].default_runfiles)

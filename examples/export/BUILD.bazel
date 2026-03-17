@@ -4,4 +4,5 @@ uv_export(
     name = "export",
     pyproject_toml = "pyproject.toml",
     requirements_txt = "requirements.txt",
+    uv_lock = "uv.lock",
 )
