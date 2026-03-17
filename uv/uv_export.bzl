@@ -48,6 +48,7 @@ def uv_export(
     """
     pyproject_toml = pyproject_toml or "//:pyproject.toml"
     requirements_txt = requirements_txt or "//:requirements.txt"
+    uv_lock = uv_lock or "//:uv.lock"
     tags = tags or []
     size = size or "small"
 

@@ -17,7 +17,7 @@ _DEFAULT_ARGS = [
 _COMMON_ATTRS = {
     "pyproject_toml": attr.label(mandatory = True, allow_single_file = True),
     "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
-    "uv_lock": attr.label(allow_single_file = True),
+    "uv_lock": attr.label(mandatory = True, allow_single_file = True),
     "py3_runtime": attr.label(),
     "data": attr.label_list(allow_files = True),
     "uv_args": attr.string_list(default = _DEFAULT_ARGS),
@@ -51,8 +51,6 @@ def _uv_uv_export(
     args += extra_args
     args.append(python_arg)
 
-    uv_lock_path = ctx.file.uv_lock.short_path if ctx.file.uv_lock else ""
-
     ctx.actions.expand_template(
         template = template,
         output = executable,
@@ -62,7 +60,7 @@ def _uv_uv_export(
             "{{python_arg}}": python_arg,
             "{{pyproject_toml}}": ctx.file.pyproject_toml.short_path,
             "{{requirements_txt}}": ctx.file.requirements_txt.short_path,
-            "{{uv_lock}}": uv_lock_path,
+            "{{uv_lock}}": ctx.file.uv_lock.short_path,
             "{{compile_command}}": compile_command,
             "{{uv_lock_args}}": " ".join(uv_lock_args),
         },
@@ -70,9 +68,7 @@ def _uv_uv_export(
 
 def _runfiles(ctx):
     py3_runtime = _python_runtime(ctx)
-    files = [ctx.file.pyproject_toml, ctx.file.requirements_txt] + ctx.files.data
-    if ctx.file.uv_lock:
-        files.append(ctx.file.uv_lock)
+    files = [ctx.file.pyproject_toml, ctx.file.requirements_txt, ctx.file.uv_lock] + ctx.files.data
     runfiles = ctx.runfiles(
         files = files,
         transitive_files = py3_runtime.files,
