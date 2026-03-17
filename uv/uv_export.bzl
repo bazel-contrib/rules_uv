@@ -9,8 +9,9 @@ def uv_export(
         uv_lock = None,
         target_compatible_with = None,
         args = None,
-        extra_args = None,
-        uv_lock_args = None,
+        common_args = None,
+        lock_args = None,
+        export_args = None,
         data = None,
         tags = None,
         size = None,
@@ -31,9 +32,10 @@ def uv_export(
            --format requirements.txt (Output in requirements.txt format)
            --no-header (Exclude the header comment with uv command that generated the file)
            --no-emit-workspace  (Don't emit any workspace structure in the output)
-        extra_args: (optional) appends to the default arguments passed to uv export. If both args and
-            extra_args are provided, extra_args will be appended to args.
-        uv_lock_args: (optional) arguments passed to uv lock.
+        common_args: (optional) arguments common to both export and lock, appended to the default args.
+        export_args: (optional) appends to the default arguments passed to uv export. If both args and
+            export_args are provided, export_args will be appended to args.
+        lock_args: (optional) arguments passed only to uv lock.
         data: (optional) a list of labels of additional files to include.
         tags: (optional) tags to apply to the generated test target.
         size: (optional) size of the test target.
@@ -59,8 +61,9 @@ def uv_export(
         uv_lock = uv_lock,
         target_compatible_with = target_compatible_with,
         uv_args = args,
-        extra_args = extra_args,
-        uv_lock_args = uv_lock_args,
+        common_args = common_args,
+        lock_args = lock_args,
+        export_args = export_args,
         data = data,
         env = env,
         **kwargs
@@ -80,8 +83,9 @@ def uv_export(
         uv_lock = uv_lock,
         target_compatible_with = target_compatible_with,
         uv_args = args,
-        extra_args = extra_args,
-        uv_lock_args = uv_lock_args,
+        common_args = common_args,
+        lock_args = lock_args,
+        export_args = export_args,
         data = data,
         tags = ["requires-network"] + tags,
         size = size,

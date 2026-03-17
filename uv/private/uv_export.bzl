@@ -21,8 +21,9 @@ _COMMON_ATTRS = {
     "py3_runtime": attr.label(),
     "data": attr.label_list(allow_files = True),
     "uv_args": attr.string_list(default = _DEFAULT_ARGS),
-    "extra_args": attr.string_list(),
-    "uv_lock_args": attr.string_list(),
+    "common_args": attr.string_list(),
+    "export_args": attr.string_list(),
+    "lock_args": attr.string_list(),
     "env": attr.string_dict(),
     "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
 }
@@ -39,30 +40,28 @@ def _uv_uv_export(
         executable,
         generator_label,
         uv_args,
-        extra_args,
-        uv_lock_args):
+        common_args,
+        export_args,
+        lock_args):
     py3_runtime = _python_runtime(ctx)
     compile_command = "bazel run {label}".format(label = str(generator_label))
 
     python_arg = "--python={python}".format(python = python_interpreter_path(py3_runtime))
 
-    args = []
-    args += uv_args
-    args += extra_args
-    args.append(python_arg)
+    export_args = uv_args + common_args + export_args + [python_arg]
+    lock_args = lock_args + common_args + [python_arg]
 
     ctx.actions.expand_template(
         template = template,
         output = executable,
         substitutions = {
             "{{uv}}": ctx.executable._uv.short_path,
-            "{{args}}": " \\\n    ".join(args),
-            "{{python_arg}}": python_arg,
             "{{pyproject_toml}}": ctx.file.pyproject_toml.short_path,
             "{{requirements_txt}}": ctx.file.requirements_txt.short_path,
             "{{uv_lock}}": ctx.file.uv_lock.short_path,
             "{{compile_command}}": compile_command,
-            "{{uv_lock_args}}": " ".join(uv_lock_args),
+            "{{export_args}}": " \\\n    ".join(export_args),
+            "{{lock_args}}": " \\\n    ".join(lock_args),
         },
     )
 
@@ -84,8 +83,9 @@ def _uv_export_impl(ctx):
         executable = executable,
         generator_label = ctx.label,
         uv_args = ctx.attr.uv_args,
-        extra_args = ctx.attr.extra_args,
-        uv_lock_args = ctx.attr.uv_lock_args,
+        common_args = ctx.attr.common_args,
+        export_args = ctx.attr.export_args,
+        lock_args = ctx.attr.lock_args,
     )
     return [
         DefaultInfo(
@@ -114,8 +114,9 @@ def _uv_export_test_impl(ctx):
         executable = executable,
         generator_label = ctx.attr.generator_label.label,
         uv_args = ctx.attr.uv_args,
-        extra_args = ctx.attr.extra_args,
-        uv_lock_args = ctx.attr.uv_lock_args,
+        common_args = ctx.attr.common_args,
+        export_args = ctx.attr.export_args,
+        lock_args = ctx.attr.lock_args,
     )
     return [
         DefaultInfo(

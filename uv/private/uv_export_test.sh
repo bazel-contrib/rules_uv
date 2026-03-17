@@ -27,7 +27,7 @@ fi
     --quiet \
     --no-cache \
     --locked \
-    {{args}} \
+    {{export_args}} \
     --project="$PROJECT_DIR" \
     --output-file="$updated_file" \
     "$@"

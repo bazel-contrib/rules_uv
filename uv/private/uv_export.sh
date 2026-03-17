@@ -19,13 +19,13 @@ if ! [ "$UV_LOCK" -ef "$LOCK_FILE" ]; then
 fi
 
 # Check if lockfile is up to date (non-empty and valid for current pyproject.toml)
-if [ ! -s "$LOCK_FILE" ] || ! {{uv}} lock --project "$PROJECT_DIR" --locked {{python_arg}} {{uv_lock_args}} >/dev/null 2>&1; then
+if [ ! -s "$LOCK_FILE" ] || ! {{uv}} lock --project "$PROJECT_DIR" --locked {{lock_args}} >/dev/null 2>&1; then
     # If lockfile exists but is empty, remove it so uv lock starts fresh
     if [ -f "$LOCK_FILE" ] && [ ! -s "$LOCK_FILE" ]; then
         rm -f "$LOCK_FILE"
     fi
 
-    {{uv}} lock --project "$PROJECT_DIR" {{python_arg}} {{uv_lock_args}}
+    {{uv}} lock --project "$PROJECT_DIR" {{lock_args}}
 
     # If BUILD_WORKSPACE_DIRECTORY is set, copy generated uv.lock back to source
     if [ -n "${BUILD_WORKSPACE_DIRECTORY:-}" ]; then
@@ -42,7 +42,7 @@ if [ ! -s "$LOCK_FILE" ] || ! {{uv}} lock --project "$PROJECT_DIR" --locked {{py
 fi
 
 {{uv}} export \
-    {{args}} \
+    {{export_args}} \
     --project=$PROJECT_DIR \
     --output-file="$REQUIREMENTS_TXT" \
     "$@"
