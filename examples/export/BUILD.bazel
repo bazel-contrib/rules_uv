@@ -1,0 +1,8 @@
+load("@rules_uv//uv:uv_export.bzl", "uv_export")
+
+uv_export(
+    name = "export",
+    pyproject_toml = "pyproject.toml",
+    requirements_txt = "requirements.txt",
+    uv_lock = "uv.lock",
+)

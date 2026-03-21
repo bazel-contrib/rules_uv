@@ -1,0 +1,15 @@
+module(
+    name = "uv__examples__export",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rules_uv", version = "0.0.0")
+bazel_dep(name = "rules_python", version = "0.31.0")
+
+local_path_override(
+    module_name = "rules_uv",
+    path = "../..",
+)
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.11")
