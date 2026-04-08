@@ -30,6 +30,8 @@ then
   exit -1
 fi
 
+{{env}}
+
 "$UV" venv "$BUILD_WORKSPACE_DIRECTORY/$target" --python "$PYTHON"  --allow-existing
 source "$BUILD_WORKSPACE_DIRECTORY/$target/bin/activate"
 "$UV" pip sync "$REQUIREMENTS_TXT" {{args}}
