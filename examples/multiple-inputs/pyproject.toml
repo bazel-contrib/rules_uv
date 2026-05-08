@@ -1,0 +1,4 @@
+[project]
+name = "multiple-inputs-example"
+version = "0.1.0"
+dependencies = ["colorama~=0.4.6"]
