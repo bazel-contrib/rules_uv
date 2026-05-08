@@ -8,6 +8,10 @@ _PY_TOOLCHAIN = "@bazel_tools//tools/python:toolchain_type"
 def _uv_template(ctx, template, executable):
     py_toolchain = ctx.toolchains[_PY_TOOLCHAIN]
 
+    args = list(ctx.attr.uv_args)
+    if ctx.attr.requirements_overrides:
+        args.append("--overrides=" + ctx.file.requirements_overrides.short_path)
+
     ctx.actions.expand_template(
         template = template,
         output = executable,
@@ -17,14 +21,15 @@ def _uv_template(ctx, template, executable):
             "{{resolved_python}}": python_interpreter_path(py_toolchain.py3_runtime),
             "{{destination_folder}}": ctx.attr.destination_folder,
             "{{site_packages_extra_files}}": " ".join(["'" + file.short_path + "'" for file in ctx.files.site_packages_extra_files]),
-            "{{args}}": " \\\n    ".join(ctx.attr.uv_args),
+            "{{args}}": " \\\n    ".join(args),
         },
     )
 
 def _runfiles(ctx):
     py_toolchain = ctx.toolchains[_PY_TOOLCHAIN]
+    overrides_file = [ctx.file.requirements_overrides] if ctx.attr.requirements_overrides else []
     runfiles = ctx.runfiles(
-        files = [ctx.file.requirements_txt] + ctx.files.site_packages_extra_files,
+        files = [ctx.file.requirements_txt] + ctx.files.site_packages_extra_files + overrides_file,
         transitive_files = py_toolchain.py3_runtime.files,
     )
     runfiles = runfiles.merge(ctx.attr._uv[0].default_runfiles)
@@ -43,6 +48,7 @@ _venv = rule(
         "destination_folder": attr.string(default = "venv"),
         "site_packages_extra_files": attr.label_list(default = [], doc = "Files to add to the site-packages folder inside the virtual environment. Useful for adding `sitecustomize.py` or `.pth` files", allow_files = True),
         "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
+        "requirements_overrides": attr.label(mandatory = False, allow_single_file = True),
         "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
         "template": attr.label(allow_single_file = True),
         "uv_args": attr.string_list(default = []),
@@ -52,23 +58,25 @@ _venv = rule(
     executable = True,
 )
 
-def create_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def create_venv(name, requirements_txt = None, requirements_overrides = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
     _venv(
         name = name,
         destination_folder = destination_folder,
         site_packages_extra_files = site_packages_extra_files,
         requirements_txt = requirements_txt or "//:requirements.txt",
+        requirements_overrides = requirements_overrides,
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
         template = Label("//uv/private:create_venv.sh"),
     )
 
-def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def sync_venv(name, requirements_txt = None, requirements_overrides = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
     _venv(
         name = name,
         destination_folder = destination_folder,
         site_packages_extra_files = site_packages_extra_files,
         requirements_txt = requirements_txt or "//:requirements.txt",
+        requirements_overrides = requirements_overrides,
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
         template = Label("//uv/private:sync_venv.sh"),
