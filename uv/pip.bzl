@@ -9,6 +9,7 @@ def pip_compile(
         requirements_in = None,
         requirements_overrides = None,
         requirements_txt = None,
+        extra_srcs = None,
         target_compatible_with = None,
         python_platform = None,
         universal = False,
@@ -29,6 +30,8 @@ def pip_compile(
             May also be provided as a list of strings which represent the requirements file lines.
         requirements_overrides: (optional, default None) a label for the file that is used to override dependencies.
         requirements_txt: (optional, default "//:requirements.txt") a label for the requirements.txt file.
+        extra_srcs: (optional) additional input files to pass positionally to `uv pip compile` alongside
+            requirements_in (e.g. a `pyproject.toml`, which cannot be `-r`-referenced).
         python_platform: (optional) a uv pip compile compatible value for --python-platform.
         universal: (optional, default False) use uv's `--universal` option
         target_compatible_with: (optional) specify that a particular target is compatible only with certain
@@ -69,6 +72,7 @@ def pip_compile(
         requirements_in = requirements_in,
         requirements_overrides = requirements_overrides,
         requirements_txt = requirements_txt,
+        extra_srcs = extra_srcs or [],
         python_platform = python_platform,
         universal = universal,
         target_compatible_with = target_compatible_with,
@@ -92,6 +96,7 @@ def pip_compile(
         requirements_in = requirements_in,
         requirements_overrides = requirements_overrides,
         requirements_txt = requirements_txt,
+        extra_srcs = extra_srcs or [],
         python_platform = python_platform or "",
         universal = universal,
         target_compatible_with = target_compatible_with,
