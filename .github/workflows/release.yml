@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.2.3
+    uses: bazel-contrib/.github/.github/workflows/release_ruleset.yaml@v7.7.0
     permissions:
       id-token: write
       contents: write
