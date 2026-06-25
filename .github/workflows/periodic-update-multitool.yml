@@ -9,34 +9,24 @@ jobs:
     name: Update Multitool Versions
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: read
+      contents: write
+      pull-requests: write
     env:
       LOCKFILE: uv/private/uv.lock.json
     # disable running on anything but main
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
-      - name: Get Token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.THM_AUTOMATION_APP_ID }}
-          private-key: ${{ secrets.THM_AUTOMATION_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          token: ${{ steps.app-token.outputs.token }}
+      - uses: actions/checkout@v4
       - name: Download and Extract Latest Multitool
         run: |
           latest="$(curl https://api.github.com/repos/theoremlp/multitool/releases/latest | jq -r '.assets[].browser_download_url | select(. | test("x86_64-unknown-linux-gnu.tar.xz$"))')"
           wget -O multitool.tar.xz "$latest"
           tar --strip-components=1 -xf multitool.tar.xz
       - name: Find Updates and Render Lockfile
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: ./multitool --lockfile "$LOCKFILE" update
       - name: Commit Changes
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
           BRANCH_NAME: "automation/update-multitool-lockfile"
         run: |
           if [[ -n "$(git diff "$LOCKFILE")" ]]
@@ -46,7 +36,7 @@ jobs:
             git checkout -b "${BRANCH_NAME}"
             git add "$LOCKFILE"
             git commit -m "Update Multitool Versions
-            
+
             Updated with [update-multitool](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) by *${GITHUB_ACTOR}*
             "
             git push origin "${BRANCH_NAME}" -f
