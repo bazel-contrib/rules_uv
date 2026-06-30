@@ -16,7 +16,7 @@ jobs:
     # disable running on anything but main
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Download and Extract Latest Multitool
         run: |
           latest="$(curl https://api.github.com/repos/theoremlp/multitool/releases/latest | jq -r '.assets[].browser_download_url | select(. | test("x86_64-unknown-linux-gnu.tar.xz$"))')"
