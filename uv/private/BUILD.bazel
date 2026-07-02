@@ -4,8 +4,24 @@ exports_files([
     "create_venv.sh",
     "pip_compile_test.sh",
     "pip_compile.sh",
+    "uv_export_test.sh",
+    "uv_export.sh",
     "sync_venv.sh",
 ])
+
+bzl_library(
+    name = "uv_export",
+    srcs = ["export.bzl"],
+    visibility = [
+        "//multitool:__subpackages__",
+        "//uv:__pkg__",
+    ],
+    deps = [
+        ":interpreter_path",
+        ":transition_to_target",
+        "@rules_python//python:defs_bzl",
+    ],
+)
 
 bzl_library(
     name = "pip",
