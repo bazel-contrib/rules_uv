@@ -16,6 +16,7 @@ _COMMON_ATTRS = {
     "requirements_in": attr.label(mandatory = True, allow_single_file = True),
     "requirements_overrides": attr.label(mandatory = False, allow_single_file = True),
     "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
+    "extra_srcs": attr.label_list(allow_files = True),
     "python_platform": attr.string(),
     "universal": attr.bool(),
     "py3_runtime": attr.label(),
@@ -64,13 +65,18 @@ def _uv_pip_compile(
     if ctx.attr.requirements_overrides:
         args.append("--overrides={overrides_file}".format(overrides_file = ctx.file.requirements_overrides.short_path))
 
+    all_srcs = [ctx.file.requirements_in] + ctx.files.extra_srcs
+    requirements_in_files = " \\\n    ".join(
+        ['"{}"'.format(f.short_path) for f in all_srcs],
+    )
+
     ctx.actions.expand_template(
         template = template,
         output = executable,
         substitutions = {
             "{{uv}}": ctx.executable._uv.short_path,
             "{{args}}": " \\\n    ".join(args),
-            "{{requirements_in}}": ctx.file.requirements_in.short_path,
+            "{{requirements_in_files}}": requirements_in_files,
             "{{requirements_txt}}": ctx.file.requirements_txt.short_path,
             "{{compile_command}}": compile_command,
         },
@@ -80,7 +86,7 @@ def _runfiles(ctx):
     py3_runtime = _python_runtime(ctx)
     overrides_file = [ctx.file.requirements_overrides] if ctx.attr.requirements_overrides else []
     runfiles = ctx.runfiles(
-        files = [ctx.file.requirements_in, ctx.file.requirements_txt] + overrides_file + ctx.files.data,
+        files = [ctx.file.requirements_in, ctx.file.requirements_txt] + ctx.files.extra_srcs + overrides_file + ctx.files.data,
         transitive_files = py3_runtime.files,
     )
     runfiles = runfiles.merge(ctx.attr._uv[0].default_runfiles)

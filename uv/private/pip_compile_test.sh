@@ -3,7 +3,6 @@
 set -euo pipefail
 
 # inputs from Bazel
-REQUIREMENTS_IN="{{requirements_in}}"
 REQUIREMENTS_TXT="{{requirements_txt}}"
 COMPILE_COMMAND="{{compile_command}}"
 
@@ -17,7 +16,7 @@ cp "$REQUIREMENTS_TXT" "$updated_file"
     --no-cache \
     {{args}} \
     --output-file="$updated_file" \
-    "$REQUIREMENTS_IN"
+    {{requirements_in_files}}
 
 # check files match
 DIFF="$(diff "$REQUIREMENTS_TXT" "$updated_file" || true)"

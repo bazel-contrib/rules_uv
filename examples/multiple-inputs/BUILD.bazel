@@ -4,6 +4,7 @@ load("@rules_uv//uv:venv.bzl", "create_venv")
 pip_compile(
     name = "generate_requirements_txt",
     data = ["//:requirements.test.in"],
+    extra_srcs = ["//:pyproject.toml"],
 )
 
 create_venv(name = "create-venv")
