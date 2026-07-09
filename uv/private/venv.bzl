@@ -7,6 +7,7 @@ _PY_TOOLCHAIN = "@bazel_tools//tools/python:toolchain_type"
 
 def _uv_template(ctx, template, executable):
     py_toolchain = ctx.toolchains[_PY_TOOLCHAIN]
+    env_exports = "\n".join(["export {}={}".format(k, v) for k, v in ctx.attr.env.items()])
 
     ctx.actions.expand_template(
         template = template,
@@ -18,6 +19,7 @@ def _uv_template(ctx, template, executable):
             "{{destination_folder}}": ctx.attr.destination_folder,
             "{{site_packages_extra_files}}": " ".join(["'" + file.short_path + "'" for file in ctx.files.site_packages_extra_files]),
             "{{args}}": " \\\n    ".join(ctx.attr.uv_args),
+            "{{env}}": env_exports,
         },
     )
 
@@ -41,6 +43,7 @@ def _venv_impl(ctx):
 _venv = rule(
     attrs = {
         "destination_folder": attr.string(default = "venv"),
+        "env": attr.string_dict(default = {}, doc = "Environment variables to set when running uv pip install. Useful for setting CC, CXX, or other build-related variables."),
         "site_packages_extra_files": attr.label_list(default = [], doc = "Files to add to the site-packages folder inside the virtual environment. Useful for adding `sitecustomize.py` or `.pth` files", allow_files = True),
         "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
         "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
@@ -52,10 +55,11 @@ _venv = rule(
     executable = True,
 )
 
-def create_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def create_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = [], env = {}):
     _venv(
         name = name,
         destination_folder = destination_folder,
+        env = env,
         site_packages_extra_files = site_packages_extra_files,
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,
@@ -63,10 +67,11 @@ def create_venv(name, requirements_txt = None, target_compatible_with = None, de
         template = Label("//uv/private:create_venv.sh"),
     )
 
-def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = [], env = {}):
     _venv(
         name = name,
         destination_folder = destination_folder,
+        env = env,
         site_packages_extra_files = site_packages_extra_files,
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,

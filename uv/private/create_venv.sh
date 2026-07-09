@@ -34,6 +34,8 @@ if [[ "$target" != /* ]]; then
   target="$BUILD_WORKSPACE_DIRECTORY/$target"
 fi
 
+{{env}}
+
 "$UV" venv "$target" --python "$PYTHON"
 source "$target/bin/activate"
 "$UV" pip install -r "$REQUIREMENTS_TXT" {{args}}
