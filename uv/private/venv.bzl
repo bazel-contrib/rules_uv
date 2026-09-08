@@ -24,7 +24,7 @@ def _uv_template(ctx, template, executable):
 def _runfiles(ctx):
     py_toolchain = ctx.toolchains[_PY_TOOLCHAIN]
     runfiles = ctx.runfiles(
-        files = [ctx.file.requirements_txt] + ctx.files.site_packages_extra_files,
+        files = [ctx.file.requirements_txt] + ctx.files.site_packages_extra_files + ctx.files.data,
         transitive_files = py_toolchain.py3_runtime.files,
     )
     runfiles = runfiles.merge(ctx.attr._uv[0].default_runfiles)
@@ -42,6 +42,7 @@ _venv = rule(
     attrs = {
         "destination_folder": attr.string(default = "venv"),
         "site_packages_extra_files": attr.label_list(default = [], doc = "Files to add to the site-packages folder inside the virtual environment. Useful for adding `sitecustomize.py` or `.pth` files", allow_files = True),
+        "data": attr.label_list(default = [], doc = "Additional files to make available to the virtual environment action", allow_files = True),
         "requirements_txt": attr.label(mandatory = True, allow_single_file = True),
         "_uv": attr.label(default = "@multitool//tools/uv", executable = True, cfg = transition_to_target),
         "template": attr.label(allow_single_file = True),
@@ -52,22 +53,24 @@ _venv = rule(
     executable = True,
 )
 
-def create_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def create_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = [], data = []):
     _venv(
         name = name,
         destination_folder = destination_folder,
         site_packages_extra_files = site_packages_extra_files,
+        data = data,
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
         template = Label("//uv/private:create_venv.sh"),
     )
 
-def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = []):
+def sync_venv(name, requirements_txt = None, target_compatible_with = None, destination_folder = None, site_packages_extra_files = [], uv_args = [], data = []):
     _venv(
         name = name,
         destination_folder = destination_folder,
         site_packages_extra_files = site_packages_extra_files,
+        data = data,
         requirements_txt = requirements_txt or "//:requirements.txt",
         target_compatible_with = target_compatible_with,
         uv_args = uv_args,
