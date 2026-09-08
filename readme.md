@@ -62,6 +62,18 @@ Create a virtual environment with default path `venv` by running `bazel run //:c
 
 The created venv will use the default Python 3 runtime defined in rules_python.
 
+Use the `data` attribute to make additional files available to the action, for example local wheel files referenced with `uv_args = ["--find-links", "wheels"]`:
+
+```starlark
+create_venv(
+    name = "create_venv",
+    data = ["//:wheels"],
+    uv_args = ["--find-links", "wheels"],
+)
+```
+
+The `data` attribute is available on both `create_venv` and `sync_venv`.
+
 ## Multi-platform setup
 
 `uv` supports generating platform-specific requirements files, and `rules_uv` exposes this configuration, and a multi-platform setup might look like this:
