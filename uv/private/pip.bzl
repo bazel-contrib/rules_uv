@@ -53,7 +53,7 @@ def _uv_pip_compile(
 
     args = []
     args += uv_args
-    args += extra_args
+    args += [ctx.expand_location(arg, ctx.attr.data) for arg in extra_args]
     args.append("--custom-compile-command='{compile_command}'".format(compile_command = compile_command))
     args.append("--python={python}".format(python = python_interpreter_path(py3_runtime)))
     args.append("--python-version={version}".format(version = _python_version(py3_runtime)))
